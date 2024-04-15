@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">The Movie</string>
+
+    //bottom navigation
+    <string name="bottom_nav_item_favorites">Favorites</string>
+    <string name="bottom_nav_item_home">Home</string>
+    <string name="bottom_nav_item_search">Search</string>
+
+    //date format
+    <string name="date_format_short_year_month_day">yyyy-mm-dd</string>
+    <string name="date_format_short_year">yyyy</string>
+
+    //sorting movies toolbar menu
+    <string name="sorting_item_rating_ascending">Rating ascending</string>
+    <string name="sorting_item_rating_descending">Rating descending</string>
+    <string name="sorting_item_release_date_ascending">Release date ascending</string>
+    <string name="sorting_item_release_date_descending">Release date descending</string>
+
+    //recommendation types
+    <string name="recommendation_type_now_playing">Now playing</string>
+    <string name="recommendation_type_popular">Popular</string>
+    <string name="recommendation_type_top_rated">Top rated</string>
+    <string name="recommendation_type_upcoming">Upcoming</string>
+
+    //movie details
+    <string name="released_in_x" formatted="true">Released in %s</string>
+    <string name="x_vote_average_vote_count_x" formatted="true">%1$s/10 ( %2$d )</string>
+    <string name="x_vote_average" formatted="true">%1$s/10</string>
+    <string name="overview">Overview</string>
+
+    //favorites
+    <string name="empty_favorites_list">There are no favorite movies added.</string>
+
+    //errors
+    <string name="offline">No internet connection</string>
+    <string name="default_error">Something went wrong, please try again.</string>
+
+</resources>

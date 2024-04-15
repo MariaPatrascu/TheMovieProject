@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_rating_ascending"
+        android:title="@string/sorting_item_rating_ascending" />
+
+    <item
+        android:id="@+id/action_rating_descending"
+        android:title="@string/sorting_item_rating_descending" />
+
+    <item
+        android:id="@+id/action_date_ascending"
+        android:title="@string/sorting_item_release_date_ascending" />
+
+    <item
+        android:id="@+id/action_date_descending"
+        android:title="@string/sorting_item_release_date_descending" />
+</menu>
