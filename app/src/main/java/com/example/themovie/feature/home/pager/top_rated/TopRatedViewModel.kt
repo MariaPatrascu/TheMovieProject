@@ -29,6 +29,7 @@ class TopRatedViewModel @Inject constructor(
     State.INITIAL
 ) {
     private var getMoviesDataJob: Job? = null
+    private var movieAdapterPosition: Int = 0
     override suspend fun process(
         intent: Intent,
         state: State
@@ -42,7 +43,10 @@ class TopRatedViewModel @Inject constructor(
             intent.recommendationType
         )
 
-        is Intent.OnMovieSelection -> goToMovieDetails(intent.recommendationType, intent.movieId)
+        is Intent.OnMovieSelection -> {
+            movieAdapterPosition = intent.movieAdapterPosition
+            goToMovieDetails(intent.sortingOption, intent.recommendationType, intent.movieId)
+        }
 
         is Intent.OnAddToFavoritesClicked ->
             movieViewModel.setFavoriteMovie(
@@ -61,6 +65,11 @@ class TopRatedViewModel @Inject constructor(
             intent.recommendationType,
             intent.sortingOption
         )
+
+        is Intent.ResetAdapterPosition -> {
+            movieAdapterPosition = 0
+            change(Change.ResetAdapterPosition(0))
+        }
     }
 
     private suspend fun refreshData(
@@ -103,18 +112,22 @@ class TopRatedViewModel @Inject constructor(
                 ) moviesForDatabase.add(it)
             }
             movieViewModel.insertMovies(moviesForDatabase)
-            sortMovies(recommendationType, sortingOption)
+            sortMovies(sortingOption, recommendationType)
         }
     }
 
-    private suspend fun goToMovieDetails(recommendationType: String, movieId: Int) {
+    private suspend fun goToMovieDetails(
+        sortingOption: String,
+        recommendationType: String,
+        movieId: Int
+    ) {
         navigate(
             Search.Navigation.GoToMovieDetailsActivity(
                 movieId
             ) {
                 viewModelScope.launch {
                     when (it) {
-                        true -> loadData(recommendationType)
+                        true -> sortMovies(sortingOption, recommendationType)
                         false -> {}
                     }
                 }
@@ -138,9 +151,11 @@ class TopRatedViewModel @Inject constructor(
             SortingOptions.DATE_DESCENDING.name ->
                 newMovieList = movieViewModel.moviesSortedByDateDescending(recommendationType)
 
-            SortingOptions.DEFAULT.name -> return
+            SortingOptions.DEFAULT.name -> newMovieList = movieViewModel.moviesByRecommendation(
+                recommendationType
+            )
         }
-        change(Change.SetContent(newMovieList))
+        change(Change.SetContent(movieAdapterPosition, newMovieList))
     }
 
     // show the data from the database filtered by recommendation type
@@ -148,6 +163,7 @@ class TopRatedViewModel @Inject constructor(
     private suspend fun loadData(recommendationType: String) =
         change(
             Change.SetContent(
+                movieAdapterPosition = movieAdapterPosition,
                 movieList = movieViewModel.moviesByRecommendation(
                     recommendationType
                 )

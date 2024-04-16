@@ -28,14 +28,18 @@ class SearchViewModel @Inject constructor(
     State.INITIAL
 ) {
     private var searchDataJob: Job? = null
+    private var movieAdapterPosition = 0
     override suspend fun process(intent: Intent, state: State) =
         when (intent) {
             is Intent.SearchForMovie -> loadData(intent.context, intent.searchQuery)
-            is Intent.OnMovieSelection -> goToMovieDetails(
-                intent.context,
-                intent.movieId,
-                intent.searchQuery
-            )
+            is Intent.OnMovieSelection -> {
+                movieAdapterPosition = intent.movieAdapterPosition
+                goToMovieDetails(
+                    intent.context,
+                    intent.movieId,
+                    intent.searchQuery
+                )
+            }
 
             is Intent.OnAddToFavoritesClicked ->
                 movieViewModel.setFavoriteMovie(
@@ -48,6 +52,11 @@ class SearchViewModel @Inject constructor(
                     false,
                     intent.movieId
                 )
+
+            is Intent.ResetAdapterPosition -> {
+                movieAdapterPosition = 0
+                change(Change.ResetAdapterPosition(0))
+            }
         }
 
     private suspend fun goToMovieDetails(context: Context, movieId: Int, searchQuery: String) {
@@ -100,7 +109,7 @@ class SearchViewModel @Inject constructor(
                 ) moviesForDatabase.add(it)
             }
             movieViewModel.insertMovies(moviesForDatabase)
-            change(Change.SetContent(movieList))
+            change(Change.SetContent(movieAdapterPosition, movieList))
         }
     }
 

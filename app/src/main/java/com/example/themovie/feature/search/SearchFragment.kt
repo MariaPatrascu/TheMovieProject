@@ -115,8 +115,15 @@ open class SearchFragment @Inject constructor() :
         _viewBinding = null
     }
 
-    override fun onItemClicked(movieId: Int) =
-        intent(Intent.OnMovieSelection(requireContext(), movieId, searchQuery))
+    override fun onMovieClicked(movieAdapterPosition: Int, movieId: Int) =
+        intent(
+            Intent.OnMovieSelection(
+                movieAdapterPosition,
+                requireContext(),
+                movieId,
+                searchQuery
+            )
+        )
 
     override fun onAddToFavoritesClicked(movieId: Int) =
         intent(Intent.OnAddToFavoritesClicked(movieId))
@@ -142,6 +149,12 @@ open class SearchFragment @Inject constructor() :
                         message = it.message,
                         context = context
                     )
+                }
+            }
+            movieAdapterPosition.get()?.let {
+                if (it != 0) {
+                    viewBinding.searchMoviesRv.smoothScrollToPosition(it)
+                    intent(Intent.ResetAdapterPosition)
                 }
             }
         }

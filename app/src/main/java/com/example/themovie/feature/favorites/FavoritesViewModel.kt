@@ -19,11 +19,15 @@ class FavoritesViewModel @Inject constructor(
 ) : ReactiveViewModel<State, Intent, Change, NavDirection>(
     State.INITIAL
 ) {
+    private var movieAdapterPosition = 0
     override suspend fun process(
         intent: Intent,
         state: State
     ) = when (intent) {
-        is Intent.OnMovieSelection -> goToMovieDetails(intent.movieId)
+        is Intent.OnMovieSelection -> {
+            movieAdapterPosition = intent.movieAdapterPosition
+            goToMovieDetails(intent.movieId)
+        }
 
         is Intent.OnAddToFavoritesClicked -> {
             movieViewModel.setFavoriteMovie(
@@ -41,6 +45,10 @@ class FavoritesViewModel @Inject constructor(
         }
 
         is Intent.LoadContent -> loadData()
+        is Intent.ResetAdapterPosition -> {
+            movieAdapterPosition = 0
+            change(Change.ResetAdapterPosition(0))
+        }
     }
 
     private suspend fun goToMovieDetails(movieId: Int) {
@@ -61,6 +69,7 @@ class FavoritesViewModel @Inject constructor(
     private suspend fun loadData() =
         change(
             Change.SetContent(
+                movieAdapterPosition = movieAdapterPosition,
                 movieList = movieViewModel.favoriteMovies().distinctBy { it.movieId }
             )
         )

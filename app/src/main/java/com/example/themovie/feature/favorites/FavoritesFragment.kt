@@ -69,8 +69,8 @@ class FavoritesFragment @Inject constructor() :
         viewBinding.favoriteMoviesRv.adapter = movieAdapter
     }
 
-    override fun onItemClicked(movieId: Int) {
-        intent(Intent.OnMovieSelection(movieId))
+    override fun onMovieClicked(movieAdapterPosition: Int, movieId: Int) {
+        intent(Intent.OnMovieSelection(movieAdapterPosition, movieId))
     }
 
     override fun onAddToFavoritesClicked(movieId: Int) {
@@ -87,6 +87,13 @@ class FavoritesFragment @Inject constructor() :
                 viewBinding.favoriteMoviesRv.isVisible = it.isNotEmpty()
                 viewBinding.favoritesEmptyText.isVisible = it.isEmpty()
                 movieAdapter.submitList(it)
+            }
+
+            movieAdapterPosition.get()?.let {
+                if (it != 0) {
+                    viewBinding.favoriteMoviesRv.smoothScrollToPosition(it)
+                    intent(Intent.ResetAdapterPosition)
+                }
             }
         }
     }

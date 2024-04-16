@@ -11,7 +11,8 @@ import javax.inject.Inject
 
 interface Favorites {
     data class State(
-        val movieList: SingleAccessData<List<Movie>?> = SingleAccessData(null, isConsumed = true)
+        val movieList: SingleAccessData<List<Movie>?> = SingleAccessData(null, isConsumed = true),
+        val movieAdapterPosition: SingleAccessData<Int?> = SingleAccessData(null, isConsumed = true)
     ) : UiState {
         companion object {
             val INITIAL = State()
@@ -20,7 +21,7 @@ interface Favorites {
 
     sealed class Intent : UiIntent {
         data object LoadContent : Intent()
-        data class OnMovieSelection(val movieId: Int) : Intent()
+        data class OnMovieSelection(val movieAdapterPosition: Int, val movieId: Int) : Intent()
         data class OnAddToFavoritesClicked(
             val movieId: Int
         ) : Intent()
@@ -28,10 +29,13 @@ interface Favorites {
         data class OnRemoveFromFavoritesClicked(
             val movieId: Int
         ) : Intent()
+
+        data object ResetAdapterPosition : Intent()
     }
 
     sealed class Change : UiChange {
-        data class SetContent(val movieList: List<Movie>) : Change()
+        data class SetContent(val movieAdapterPosition: Int, val movieList: List<Movie>) : Change()
+        data class ResetAdapterPosition(val movieAdapterPosition: Int) : Change()
     }
 
     sealed class Navigation : NavDirection {
@@ -45,7 +49,14 @@ interface Favorites {
         override fun invoke(state: State, change: Change): State {
             return when (change) {
                 is Change.SetContent -> state.copy(
+                    movieAdapterPosition = SingleAccessData(change.movieAdapterPosition),
                     movieList = SingleAccessData(change.movieList)
+                )
+
+                is Change.ResetAdapterPosition -> state.copy(
+                    movieAdapterPosition = SingleAccessData(
+                        change.movieAdapterPosition
+                    )
                 )
             }
         }

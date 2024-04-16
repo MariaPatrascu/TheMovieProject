@@ -19,7 +19,7 @@ class MovieAdapter(val callback: Callback) :
     ListAdapter<Movie, MovieAdapter.ViewHolder>(DiffCallback()) {
 
     interface Callback {
-        fun onItemClicked(movieId: Int)
+        fun onMovieClicked(movieAdapterPosition: Int, movieId: Int)
         fun onAddToFavoritesClicked(movieId: Int)
         fun onRemoveFromFavoritesClicked(movieId: Int)
     }
@@ -53,7 +53,7 @@ class MovieAdapter(val callback: Callback) :
             displayMovieYear(movie)
 
             viewBinding.root.setOnClickListener {
-                callback.onItemClicked(movie.movieId)
+                callback.onMovieClicked(adapterPosition, movie.movieId)
             }
 
             val favoriteImage =

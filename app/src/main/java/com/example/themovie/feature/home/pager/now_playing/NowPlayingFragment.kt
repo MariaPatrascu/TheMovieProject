@@ -27,6 +27,9 @@ class NowPlayingFragment : ReactiveView<State, Intent>(), MovieAdapter.Callback 
     private val viewBinding get() = _viewBinding!!
     private var recommendationType = ""
 
+    // we need to know what sorting option was currently selected for swipe to refresh
+    private var sortingOption = ""
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,8 +42,6 @@ class NowPlayingFragment : ReactiveView<State, Intent>(), MovieAdapter.Callback 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         bind(NowPlayingViewModel::class, sharedWithActivity = true)
         initMovieAdapter()
-        // we need to know what sorting option was currently selected for swipe to refresh
-        var sortingOption = ""
         arguments?.takeIf { it.containsKey(SharedExtras.RECOMMENDATION_TYPE) }?.apply {
             recommendationType = getString(SharedExtras.RECOMMENDATION_TYPE) ?: ""
             intent(Intent.ShowMoviesByRecommendation(recommendationType))
@@ -70,8 +71,15 @@ class NowPlayingFragment : ReactiveView<State, Intent>(), MovieAdapter.Callback 
         viewBinding.moviesRv.adapter = movieAdapter
     }
 
-    override fun onItemClicked(movieId: Int) {
-        intent(Intent.OnMovieSelection(recommendationType, movieId))
+    override fun onMovieClicked(movieAdapterPosition: Int, movieId: Int) {
+        intent(
+            Intent.OnMovieSelection(
+                sortingOption,
+                movieAdapterPosition,
+                recommendationType,
+                movieId
+            )
+        )
     }
 
     override fun onAddToFavoritesClicked(movieId: Int) {
@@ -103,6 +111,16 @@ class NowPlayingFragment : ReactiveView<State, Intent>(), MovieAdapter.Callback 
                         message = it.message,
                         context = context
                     )
+                }
+            }
+
+            // we need to know adapter position when we come back from the movie details screen and we've added/removed a movie
+            // from favorites
+            // this can be improved on the recycler view scroll animation side
+            movieAdapterPosition.get()?.let {
+                if (it != 0) {
+                    viewBinding.moviesRv.smoothScrollToPosition(it)
+                    intent(Intent.ResetAdapterPosition)
                 }
             }
         }

@@ -14,22 +14,22 @@
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/close_image"
         tools:src="@color/black" />
 
     <ImageView
         android:id="@+id/close_image"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+
         android:adjustViewBounds="true"
         android:importantForAccessibility="no"
         android:padding="10dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_close_white"
+        android:src="@drawable/ic_close"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/movie_backdrop"/>
 
     <LinearLayout
         android:id="@+id/movie_details_layout"
